@@ -16,6 +16,7 @@ const { Camera, Filesystem, Storage } = Plugins;
 export class PhotoService {
 
   public photos: Photo[] = [];
+  private PHOTO_STORAGE: string = 'photos';
 
   constructor() { }
 
@@ -29,6 +30,10 @@ export class PhotoService {
     const savedImageFile = await this.savePicture(capturedPhoto);
 
     this.photos.unshift(savedImageFile);
+    Storage.set({
+      key: this.PHOTO_STORAGE,
+      value: JSON.stringify(this.photos)
+    });
   }
 
   private async savePicture(cameraPhoto: CameraPhoto) {
@@ -62,6 +67,20 @@ export class PhotoService {
     }
     reader.readAsDataURL(blob);
   })
+
+  public async loadSaved(){
+    const photoList = await Storage.get({ key: this.PHOTO_STORAGE });
+    this.photos = JSON.parse(photoList.value) || [];
+
+    for (let photo of this.photos){
+      const readFile = await Filesystem.readFile({
+        path: photo.filePath,
+        directory: FilesystemDirectory.Data
+      });
+
+      photo.webviewPath = `data:image/jpeg;base64,${readFile.data}`;
+    }
+  }
 }
 
 export interface Photo {
