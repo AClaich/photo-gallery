@@ -103,6 +103,21 @@ export class PhotoService {
       }
     }
   }
+
+  public async deletePicture(photo: Photo, position: number){
+    this.photos.splice(position,1);
+    Storage.set({
+      key: this.PHOTO_STORAGE,
+      value: JSON.stringify(this.photos)
+    });
+
+    const filename = photo.filePath.substr(photo.filePath.lastIndexOf('/') + 1);
+
+    await Filesystem.deleteFile({
+      path: filename,
+      directory: FilesystemDirectory.Data
+    });
+  }
 }
 
 export interface Photo {

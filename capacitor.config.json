@@ -3,11 +3,14 @@
   "appName": "photo-gallery",
   "bundledWebRuntime": false,
   "npmClient": "npm",
-  "webDir": "www",
+  "webDir": "src",
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0
     }
   },
-  "cordova": {}
+  "cordova": {},
+  "server": {
+    "url": "http://192.168.1.79:8101"
+  }
 }
